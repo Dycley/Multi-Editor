@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 
 # Form implementation generated from reading ui file 'Editor.ui'
 #
@@ -9,13 +10,19 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMdiSubWindow, QPlainTextEdit, QTextEdit, QFileDialog, QMainWindow, QWidget
 
 
-class Ui_Editor(object):
+class Ui_Editor(QMainWindow, QWidget):
+    def __init__(self):
+        super(Ui_Editor, self).__init__()
+        self.newDocIndex = 1
+
     def setupUi(self, Editor):
         Editor.setObjectName("Editor")
-        Editor.resize(1200, 1200)
+        Editor.resize(1600, 1600)
         self.centralwidget = QtWidgets.QWidget(Editor)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -57,12 +64,10 @@ class Ui_Editor(object):
         self.action_close.setObjectName("action_close")
         self.action_about = QtWidgets.QAction(Editor)
         self.action_about.setObjectName("action_about")
-        self.actionpile = QtWidgets.QAction(Editor)
-        self.actionpile.setObjectName("actionpile")
-        self.actionhori = QtWidgets.QAction(Editor)
-        self.actionhori.setObjectName("actionhori")
-        self.actionverti = QtWidgets.QAction(Editor)
-        self.actionverti.setObjectName("actionverti")
+        self.actioncascade = QtWidgets.QAction(Editor)
+        self.actioncascade.setObjectName("actionpile")
+        self.actiontile = QtWidgets.QAction(Editor)
+        self.actiontile.setObjectName("actionverti")
         self.actioncut = QtWidgets.QAction(Editor)
         self.actioncut.setObjectName("actioncut")
         self.actioncopy = QtWidgets.QAction(Editor)
@@ -81,6 +86,10 @@ class Ui_Editor(object):
         self.amid.setObjectName("amid")
         self.aright = QtWidgets.QAction(Editor)
         self.aright.setObjectName("aright")
+        self.undo = QtWidgets.QAction(Editor)
+        self.undo.setObjectName("undo")
+        self.redo = QtWidgets.QAction(Editor)
+        self.redo.setObjectName("redo")
         self.menu.addAction(self.action_new)
         self.menu.addAction(self.action_open)
         self.menu.addAction(self.action_save)
@@ -95,9 +104,8 @@ class Ui_Editor(object):
         self.menu_2.addAction(self.actioncolor)
         self.menu_2.addSeparator()
         self.menu_2.addAction(self.actionsearch)
-        self.menu_3.addAction(self.actionpile)
-        self.menu_3.addAction(self.actionhori)
-        self.menu_3.addAction(self.actionverti)
+        self.menu_3.addAction(self.actioncascade)
+        self.menu_3.addAction(self.actiontile)
         self.menu_4.addAction(self.action_about)
         self.menubar.addAction(self.menu.menuAction())
         self.menubar.addAction(self.menu_2.menuAction())
@@ -126,9 +134,8 @@ class Ui_Editor(object):
         self.action_saveas.setText(_translate("Editor", "另存为..."))
         self.action_close.setText(_translate("Editor", "关闭"))
         self.action_about.setText(_translate("Editor", "关于"))
-        self.actionpile.setText(_translate("Editor", "级联显示"))
-        self.actionhori.setText(_translate("Editor", "水平铺展"))
-        self.actionverti.setText(_translate("Editor", "垂直铺展"))
+        self.actioncascade.setText(_translate("Editor", "级联显示"))
+        self.actiontile.setText(_translate("Editor", "平铺显示"))
         self.actioncut.setText(_translate("Editor", "剪切"))
         self.actioncopy.setText(_translate("Editor", "复制"))
         self.actionpaste.setText(_translate("Editor", "粘贴"))
@@ -138,6 +145,8 @@ class Ui_Editor(object):
         self.aleft.setText(_translate("Editor", "左对齐"))
         self.amid.setText(_translate("Editor", "居中对齐"))
         self.aright.setText(_translate("Editor", "右对齐"))
+        self.undo.setText(_translate("Editor", "撤回"))
+        self.redo.setText(_translate("Editor", "前进"))
 
     # 菜单栏初始化
     def action_init(self):
@@ -145,23 +154,19 @@ class Ui_Editor(object):
         self.action_new.setShortcut('Ctrl+N')
         self.action_new.setToolTip('新建')
         self.action_new.setStatusTip('新建文件')
-        self.action_new.triggered.connect(self.new_fun)
 
         self.action_open.setIcon(QIcon('image/open.png'))
         self.action_open.setShortcut('Ctrl+O')
         self.action_open.setToolTip('打开')
         self.action_open.setStatusTip('打开文件')
-        self.action_open.triggered.connect(self.new_fun)
 
         self.action_save.setIcon(QIcon('image/save.ico'))
         self.action_save.setShortcut('Ctrl+S')
         self.action_save.setToolTip('保存')
         self.action_save.setStatusTip('保存文件')
-        self.action_save.triggered.connect(self.save_fun)
 
         self.action_saveas.setIcon(QIcon('image/save_as.ico'))
         self.action_saveas.setStatusTip('保存文件')
-        self.action_saveas.triggered.connect(self.saveas_fun)
 
         self.action_close.setIcon(QIcon('image/close.png'))
 
@@ -169,31 +174,30 @@ class Ui_Editor(object):
         self.actioncut.setShortcut('Ctrl+X')
         self.actioncut.setToolTip('剪切')
         self.actioncut.setStatusTip('剪切选中部分')
-        self.actioncut.triggered.connect(self.cut_fun)
 
         self.actioncopy.setIcon(QIcon('image/copy.png'))
         self.actioncopy.setShortcut('Ctrl+C')
         self.actioncopy.setToolTip('复制')
         self.actioncopy.setStatusTip('复制选中部分')
-        self.actioncopy.triggered.connect(self.save_fun)
 
         self.actionpaste.setIcon(QIcon('image/paste.png'))
         self.actionpaste.setShortcut('Ctrl+V')
         self.actionpaste.setToolTip('粘贴')
         self.actionpaste.setStatusTip('粘贴文字')
-        self.actionpaste.triggered.connect(self.paste_fun)
 
-        self.actionpile.setIcon(QIcon('image/平铺.png'))
-        self.actionpile.setStatusTip('级联展示')
-        # self.actionpaste.triggered.connect(self.)
+        self.actioncascade.setIcon(QIcon('image/平铺.png'))
+        self.actioncascade.setStatusTip('级联展示')
 
-        self.actionverti.setIcon(QIcon('image/横向布局.png'))
-        self.actionverti.setStatusTip('水平展示')
-        # self.actionpaste.triggered.connect(self.)
+        self.actiontile.setIcon(QIcon('image/横向布局.png'))
+        self.actiontile.setStatusTip('平铺展示')
 
-        self.actionhori.setIcon(QIcon('image/竖向布局.png'))
-        self.actionhori.setStatusTip('垂直展示')
-        # self.actionpaste.triggered.connect(self.)
+        self.undo.setIcon(QIcon('image/undo.png'))
+        self.undo.setToolTip('撤回')
+        self.undo.setStatusTip('撤回')
+
+        self.redo.setIcon(QIcon('image/redo.png'))
+        self.redo.setToolTip('前进')
+        self.redo.setStatusTip('取消撤回')
 
         self.aleft.setIcon(QIcon('image/左对齐.png'))
         self.aleft.setToolTip('左对齐')
@@ -213,7 +217,7 @@ class Ui_Editor(object):
         self.actionfont.setToolTip('字体')
         self.actionfont.setStatusTip('设置字体')
 
-        self.actionsearch.setIcon(QIcon('image/font.png'))
+        self.actionsearch.setIcon(QIcon('image/search.png'))
         self.actionsearch.setToolTip('查找替换')
         self.actionsearch.setStatusTip('查找替换')
 
@@ -224,33 +228,70 @@ class Ui_Editor(object):
     def toolbar_init(self):
         self.toolBar.addActions([self.action_new, self.action_open, self.action_save])
         self.toolBar.addActions([self.actionfont, self.actioncolor])
-
+        self.toolBar.addActions([self.undo, self.redo])
         self.toolBar.addActions([self.aleft, self.amid, self.aright])
         self.toolBar.addActions([self.actioncut, self.actioncopy, self.actionpaste])
         self.toolBar.addActions([self.actionsearch])
 
     def connector(self):
         self.action_close.triggered.connect(MainWindow.close)
+        self.action_new.triggered.connect(self.new_fun)
+        self.action_open.triggered.connect(self.open_fun)
+        self.action_save.triggered.connect(self.save_fun)
+        self.action_saveas.triggered.connect(self.saveas_fun)
+        self.actioncut.triggered.connect(lambda: self.mdiArea.activeSubWindow().widget().cut())
+        self.actioncopy.triggered.connect(lambda: self.mdiArea.activeSubWindow().widget().copy())
+        self.actionpaste.triggered.connect(lambda: self.mdiArea.activeSubWindow().widget().paste())
+        self.actioncascade.triggered.connect(self.mdiArea.cascadeSubWindows)
+        self.actiontile.triggered.connect(self.mdiArea.tileSubWindows)
+        self.undo.triggered.connect(lambda: self.mdiArea.activeSubWindow().widget().undo())
+        self.redo.triggered.connect(lambda: self.mdiArea.activeSubWindow().widget().redo())
+        self.aleft.triggered.connect(lambda: self.mdiArea.activeSubWindow().widget().setAlignment(Qt.AlignLeft))
+        self.aright.triggered.connect(lambda: self.mdiArea.activeSubWindow().widget().setAlignment(Qt.AlignRight))
+        self.amid.triggered.connect(lambda: self.mdiArea.activeSubWindow().widget().setAlignment(Qt.AlignCenter))
 
+    # 新建文件
     def new_fun(self):
-        pass
+        try:
+            newDoc = QMdiSubWindow()
+            newDoc.resize(782, 720)
+            newDoc.setWindowTitle('Untitled-' + str(self.newDocIndex))
+            self.newDocIndex += 1
+            newDoc.setWidget(QTextEdit(newDoc))
+            self.mdiArea.addSubWindow(newDoc)
+            newDoc.show()
+        except Exception as e:
+            print(e)
 
+    # 打开文件
     def open_fun(self):
-        pass
+        path, filetype = QFileDialog.getOpenFileName(self, "打开文件", "./",
+                                                     "纯文本 (*.txt);;网页 (*htm; *.html)")
+        if path:
+            filename = os.path.basename(path)
+            print(filename, filetype)
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+            except Exception as e:
+                print(e)
+            else:
+                openDoc = QMdiSubWindow()
+                openDoc.setWindowTitle(filename)
+                textedit = QTextEdit(openDoc)
+                if "(*.txt)" in filetype:
+                    textedit.setPlainText(content)
+                elif "(*htm; *.html)" in filetype:
+                    textedit.setHtml(content)
+                openDoc.setWidget(textedit)
+                openDoc.resize(782, 720)
+                self.mdiArea.addSubWindow(openDoc)
+                openDoc.show()
 
     def save_fun(self):
         pass
 
     def saveas_fun(self):
-        pass
-
-    def copy_fun(self):
-        pass
-
-    def cut_fun(self):
-        pass
-
-    def paste_fun(self):
         pass
 
 
