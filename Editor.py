@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+import chardet
 # Form implementation generated from reading ui file 'Editor.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
@@ -18,7 +19,6 @@ from PyQt5.QtWidgets import QMdiSubWindow, QPlainTextEdit, QTextEdit, QFileDialo
 class Ui_Editor(QMainWindow, QWidget):
     def __init__(self):
         super(Ui_Editor, self).__init__()
-        self.newDocIndex = 1
 
     def setupUi(self, Editor):
         Editor.setObjectName("Editor")
@@ -253,11 +253,11 @@ class Ui_Editor(QMainWindow, QWidget):
     # 新建文件
     def new_fun(self):
         try:
-            newDoc = QMdiSubWindow()
-            newDoc.resize(782, 720)
-            newDoc.setWindowTitle('Untitled-' + str(self.newDocIndex))
-            self.newDocIndex += 1
+            newDoc = MdiTextEdit()
+            newDoc.setWindowTitle('Untitled-' + str(MdiTextEdit.newDocIndex))
+            MdiTextEdit.newDocIndex += 1
             newDoc.setWidget(QTextEdit(newDoc))
+            newDoc.resize(782, 720)
             self.mdiArea.addSubWindow(newDoc)
             newDoc.show()
         except Exception as e:
@@ -266,34 +266,76 @@ class Ui_Editor(QMainWindow, QWidget):
     # 打开文件
     def open_fun(self):
         path, filetype = QFileDialog.getOpenFileName(self, "打开文件", "./",
-                                                     "纯文本 (*.txt);;网页 (*htm; *.html)")
+                                                     "纯文本 (*.txt);;网页 (*.htm; *.html)")
         if path:
             filename = os.path.basename(path)
-            print(filename, filetype)
             try:
-                with open(path, 'r', encoding='utf-8') as f:
+                def get_encoding(file):  # 获取文本编码方式
+                    with open(file, 'rb') as f:
+                        tmp = chardet.detect(f.read())
+                        return tmp['encoding']
+                with open(path, 'r', encoding=get_encoding(path)) as f:
                     content = f.read()
             except Exception as e:
                 print(e)
             else:
-                openDoc = QMdiSubWindow()
+                openDoc = MdiTextEdit()
+                openDoc.path = path
                 openDoc.setWindowTitle(filename)
                 textedit = QTextEdit(openDoc)
                 if "(*.txt)" in filetype:
                     textedit.setPlainText(content)
-                elif "(*htm; *.html)" in filetype:
+                elif "(*.htm; *.html)" in filetype:
                     textedit.setHtml(content)
                 openDoc.setWidget(textedit)
                 openDoc.resize(782, 720)
                 self.mdiArea.addSubWindow(openDoc)
                 openDoc.show()
 
+    # 保存文件
     def save_fun(self):
-        pass
+        try:
+            if self.mdiArea.subWindowList():
+                activeWindow = self.mdiArea.activeSubWindow()
+                if not activeWindow.path:
+                    self.saveas_fun()
+                else:
+                        with open(activeWindow.path, 'w', encoding='utf-8') as f:
+                            if activeWindow.path.endswith(".txt"):
+                                f.write(activeWindow.widget().toPlainText())
+                            elif activeWindow.path.endswith(".htm") or activeWindow.path.endswith(".html"):
+                                f.write(activeWindow.widget().toHtml())
+                        activeWindow.is_saved = True
+        except Exception as e:
+            print(e)
 
+
+    # 另存为文件
     def saveas_fun(self):
-        pass
+        try:
+            if self.mdiArea.subWindowList():
+                activeWindow = self.mdiArea.activeSubWindow()
+                filename = activeWindow.windowTitle()
+                path, filetype = QFileDialog.getSaveFileName(self, "保存文件", "./" + filename,
+                                                             "纯文本 (*.txt);;网页 (*.html; *.htm)")
+                if path:
+                        with open(path, 'w', encoding='utf-8') as f:
+                            if "(*.txt)" in filetype:
+                                f.write(activeWindow.widget().toPlainText())
+                            elif "(*.html; *.htm)" in filetype:
+                                f.write(activeWindow.widget().toHtml())
+                        activeWindow.path = path
+        except Exception as e:
+            print(e)
 
+
+# 子窗体
+class MdiTextEdit(QMdiSubWindow):
+    newDocIndex = 1              # 新建文件产生的编号
+
+    def __init__(self):
+        super(MdiTextEdit, self).__init__()
+        self.path = ''
 
 if __name__ == '__main__':
     import sys
