@@ -13,7 +13,7 @@ import chardet
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMdiSubWindow, QPlainTextEdit, QTextEdit, QFileDialog, QMainWindow, QWidget
+from PyQt5.QtWidgets import QMdiSubWindow, QTextEdit, QFileDialog, QMainWindow, QWidget
 
 
 class Ui_Editor(QMainWindow, QWidget):
@@ -23,6 +23,7 @@ class Ui_Editor(QMainWindow, QWidget):
     def setupUi(self, Editor):
         Editor.setObjectName("Editor")
         Editor.resize(1600, 1600)
+        Editor.setWindowIcon(QIcon("images/note.png"))
         self.centralwidget = QtWidgets.QWidget(Editor)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -150,78 +151,78 @@ class Ui_Editor(QMainWindow, QWidget):
 
     # 菜单栏初始化
     def action_init(self):
-        self.action_new.setIcon(QIcon('image/new.ico'))
+        self.action_new.setIcon(QIcon('images/new.png'))
         self.action_new.setShortcut('Ctrl+N')
         self.action_new.setToolTip('新建')
         self.action_new.setStatusTip('新建文件')
 
-        self.action_open.setIcon(QIcon('image/open.png'))
+        self.action_open.setIcon(QIcon('images/open.png'))
         self.action_open.setShortcut('Ctrl+O')
         self.action_open.setToolTip('打开')
         self.action_open.setStatusTip('打开文件')
 
-        self.action_save.setIcon(QIcon('image/save.ico'))
+        self.action_save.setIcon(QIcon('images/save.png'))
         self.action_save.setShortcut('Ctrl+S')
         self.action_save.setToolTip('保存')
         self.action_save.setStatusTip('保存文件')
 
-        self.action_saveas.setIcon(QIcon('image/save_as.ico'))
+        self.action_saveas.setIcon(QIcon('images/saveas.png'))
         self.action_saveas.setStatusTip('保存文件')
 
-        self.action_close.setIcon(QIcon('image/close.png'))
+        self.action_close.setIcon(QIcon('images/close.png'))
 
-        self.actioncut.setIcon(QIcon('image/cut.png'))
+        self.actioncut.setIcon(QIcon('images/cut.png'))
         self.actioncut.setShortcut('Ctrl+X')
         self.actioncut.setToolTip('剪切')
         self.actioncut.setStatusTip('剪切选中部分')
 
-        self.actioncopy.setIcon(QIcon('image/copy.png'))
+        self.actioncopy.setIcon(QIcon('images/copy.png'))
         self.actioncopy.setShortcut('Ctrl+C')
         self.actioncopy.setToolTip('复制')
         self.actioncopy.setStatusTip('复制选中部分')
 
-        self.actionpaste.setIcon(QIcon('image/paste.png'))
+        self.actionpaste.setIcon(QIcon('images/paste.png'))
         self.actionpaste.setShortcut('Ctrl+V')
         self.actionpaste.setToolTip('粘贴')
         self.actionpaste.setStatusTip('粘贴文字')
 
-        self.actioncascade.setIcon(QIcon('image/平铺.png'))
+        self.actioncascade.setIcon(QIcon('images/cascade.png'))
         self.actioncascade.setStatusTip('级联展示')
 
-        self.actiontile.setIcon(QIcon('image/横向布局.png'))
+        self.actiontile.setIcon(QIcon('images/tile.png'))
         self.actiontile.setStatusTip('平铺展示')
 
-        self.undo.setIcon(QIcon('image/undo.png'))
+        self.undo.setIcon(QIcon('images/undo.png'))
         self.undo.setToolTip('撤回')
         self.undo.setStatusTip('撤回')
 
-        self.redo.setIcon(QIcon('image/redo.png'))
+        self.redo.setIcon(QIcon('images/redo.png'))
         self.redo.setToolTip('前进')
         self.redo.setStatusTip('取消撤回')
 
-        self.aleft.setIcon(QIcon('image/左对齐.png'))
+        self.aleft.setIcon(QIcon('images/left.png'))
         self.aleft.setToolTip('左对齐')
         self.aleft.setStatusTip('左对齐')
-        self.aright.setIcon(QIcon('image/右对齐.png'))
+        self.aright.setIcon(QIcon('images/right.png'))
         self.aright.setToolTip('右对齐')
         self.aright.setStatusTip('右对齐')
-        self.amid.setIcon(QIcon('image/居中.png'))
+        self.amid.setIcon(QIcon('images/center.png'))
         self.amid.setToolTip('居中对齐')
         self.amid.setStatusTip('居中对齐')
 
-        self.actioncolor.setIcon(QIcon('image/color.ico'))
+        self.actioncolor.setIcon(QIcon('images/color.png'))
         self.actioncolor.setToolTip('颜色')
         self.actioncolor.setStatusTip('设置颜色')
 
-        self.actionfont.setIcon(QIcon('image/font.png'))
+        self.actionfont.setIcon(QIcon('images/font.png'))
         self.actionfont.setToolTip('字体')
         self.actionfont.setStatusTip('设置字体')
 
-        self.actionsearch.setIcon(QIcon('image/search.png'))
+        self.actionsearch.setIcon(QIcon('images/search.png'))
         self.actionsearch.setToolTip('查找替换')
         self.actionsearch.setStatusTip('查找替换')
 
-        self.action_about.setIcon(QIcon('image/作者.png'))
+        self.action_about.setIcon(QIcon('images/about.png'))
         self.action_about.setStatusTip('关于')
 
     # 工具栏初始化
