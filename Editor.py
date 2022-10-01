@@ -342,6 +342,7 @@ class Ui_Editor(QWidget):
                         f.write(activeWindow.widget().toPlainText())
                     elif "(*.html; *.htm)" in filetype:
                         f.write(activeWindow.widget().toHtml())
+                activeWindow.setWindowTitle(os.path.basename(path))
                 activeWindow.path = path
                 activeWindow.textedit.document().setModified(False)
                 return True
